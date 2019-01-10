@@ -7,7 +7,7 @@ requires = ["requests","loguru","notifiers","rdflib"]
        
 setuptools.setup(
     name="isolid",
-    version="0.3.1",
+    version="0.3.2",
     author="Indira",
     author_email="indira@qxf2.com",
     description="This module allows to perform some basic Inrupt Solid operations",
