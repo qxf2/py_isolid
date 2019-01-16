@@ -9,19 +9,6 @@ from rdflib.namespace import FOAF
 from loguru import logger
 
 
-def login(url,username,password):
-    "Login into the Solid"
-    result_flag = False
-    try:
-        login  = requests.post(url,username,password)
-    except Exception as e:
-        logger.debug("\n******\nException when logging into Solid,{}", e)                  
-    else:
-        result_flag = True
-
-    return result_flag
-
-
 def get_solid_profile_data(webID):
     "fetch the profile details for the given uri"           
     response=None          
@@ -39,7 +26,7 @@ def get_rdf_resource_data(uri):
     resource_response=None        
     try:             
         headers={'Content-Type': 'text/turtle'}
-        resource_response = requests.ge(uri,headers)                               
+        resource_response = requests.get(uri,headers)                               
         if resource_response.status_code==200:
             return resource_response.text                                 
     except Exception as e:
@@ -55,7 +42,7 @@ def get_server_capabilities(uri,capabilities_list):
         if option_list.status_code==200:                                
             return option_list.text                
     except Exception as e:
-        logger.debug("\n******\nGET Error: {url},{}", e, url=url)    
+        logger.debug("\n******\nOPTIONS Error: {url},{}", e, url=url)    
 
                 
 def get_friends_list(webID):
@@ -92,6 +79,7 @@ def get_subj_pred_object(webID):
 def get_subject_list(webID):
     "A generator of subjects with the given predicate and object"
     subject_list = []
+    subjects = None
     try:
         g = create_rdf_graph(webID)
         subj = g.subjects(predicate=None, object=None)
@@ -107,6 +95,7 @@ def get_subject_list(webID):
 def get_predicate_list(webID):
     "get the list of all of the Predicates in the graph"        
     predicate_list = []
+    predicates = None
     try:
         g = create_rdf_graph(webID)
         preds = g.predicates(subject=None,object=None)
