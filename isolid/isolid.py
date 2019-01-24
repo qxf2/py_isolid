@@ -9,8 +9,21 @@ from rdflib.namespace import FOAF
 from loguru import logger
 
 
+def login(url,username,password):
+    "Login into the Solid"
+    result_flag = False
+    try:
+        login  = requests.post(url,username,password)
+    except Exception as e:
+        logger.debug("\n******\nException when logging into Solid,{}", e)                  
+    else:
+        result_flag = True
+
+    return result_flag
+
+
 def get_solid_profile_data(webID):
-    "fetch the profile details for the given uri"           
+    "Fetch the profile details for the given uri"           
     response=None          
     try:
         headers={'Content-Type': 'text/turtle'}
@@ -22,7 +35,7 @@ def get_solid_profile_data(webID):
         
                                     
 def get_rdf_resource_data(uri):
-    "Read a RDF resource and returns the data"           
+    "Read a RDF public resource and return the data"           
     resource_response=None        
     try:             
         headers={'Content-Type': 'text/turtle'}
@@ -46,7 +59,7 @@ def get_server_capabilities(uri,capabilities_list):
 
                 
 def get_friends_list(webID):
-    "create, parse graph and get the friends list for the given URI"       
+    "Create, parse graph and get the friends list for the given URI"       
     friends = None 
     try:
         g = create_rdf_graph(webID)   
@@ -63,7 +76,7 @@ def get_friends_list(webID):
 
 
 def get_subj_pred_object(webID):
-    "get subject, predicate and object for the given uri"
+    "Get subject, predicate and object for the given uri"
     triple_list = []
     try:
         g = create_rdf_graph(webID) 
@@ -93,7 +106,7 @@ def get_subject_list(webID):
 
 
 def get_predicate_list(webID):
-    "get the list of all of the Predicates in the graph"        
+    "Get the list of all of the Predicates in the graph"        
     predicate_list = []
     predicates = None
     try:
@@ -108,8 +121,8 @@ def get_predicate_list(webID):
     return predicates
 
 
-def get_object_labels(webID):
-    "return a list of objects for the given uri"  
+def get_object_list(webID):
+    "Return a list of objects for the given uri"  
     object_list = [] 
     object_labels = None
     try:
@@ -159,7 +172,7 @@ def create_rdf_resource(uri,Link,Slug,data):
 
 
 def update_rdf_resource(uri,data):
-    'updating a RDF resource'
+    'Updating a RDF resource'
     result_flag=False
     try:                             
         response = requests.put(uri,headers={'Content-Type': 'text/turtle',  
@@ -173,7 +186,7 @@ def update_rdf_resource(uri,data):
 
 
 def delete_rdf_resource(uri):
-    "deleting a RDF resource"
+    "Deleting a RDF resource"
     result_flag=False
     try:                    
         response = requests.delete(uri,headers={'Content-Type': 'text/turtle'})         
@@ -187,7 +200,7 @@ def delete_rdf_resource(uri):
                
         
 def create_rdf_graph(webID):
-    "parse a URI into a graph"
+    "Parse a URI into a graph"
     #Create an empty graph that we can load data into
     graph = Graph()
     #Parse the fetched data into the graph
@@ -205,10 +218,11 @@ def read_rdf_file(filename):
     graph.parse(filename)
     
     return graph    
+    
 
 @logger.catch
 def generate_rdfxml_from_rdftriples(webID):
-    "generating RDF/XML file from rdf triples"    
+    "Generating RDF/XML file from rdf triples"    
     graph = Graph()
     graph.parse(webID)
     rdf_xml = graph.serialize(format='pretty-xml')
